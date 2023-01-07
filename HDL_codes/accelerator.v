@@ -23,7 +23,7 @@ module ACCELERATOR_CTRL #
 
   // control interface ports
   input wire [avs_avalonslave_address_width - 1:0] avs_avalonslave_address,
-  output wire avs_avalonslave_waitrequest,
+  //output wire avs_avalonslave_waitrequest,
   input wire avs_avalonslave_read,
   input wire avs_avalonslave_write,
   output wire [avs_avalonslave_data_width - 1:0] avs_avalonslave_readdata,
@@ -59,7 +59,7 @@ AVS_AVALONSLAVE #
   .CSI_CLOCK_CLK(csi_clock_clk),
   .CSI_CLOCK_RESET_N(csi_clock_reset_n),
   .AVS_AVALONSLAVE_ADDRESS(avs_avalonslave_address),
-  .AVS_AVALONSLAVE_WAITREQUEST(avs_avalonslave_waitrequest),
+  //.AVS_AVALONSLAVE_WAITREQUEST(avs_avalonslave_waitrequest),
   .AVS_AVALONSLAVE_READ(avs_avalonslave_read),
   .AVS_AVALONSLAVE_WRITE(avs_avalonslave_write),
   .AVS_AVALONSLAVE_READDATA(avs_avalonslave_readdata),

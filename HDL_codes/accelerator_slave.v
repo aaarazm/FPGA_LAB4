@@ -7,15 +7,19 @@ module AVS_AVALONSLAVE #
 )
 (
   // user ports begin
-  output wire START,
   input wire DONE,
+  output wire START,
+  output wire [AVS_AVALONSLAVE_DATA_WIDTH - 1:0] SLV_REG0,
+  output wire [AVS_AVALONSLAVE_DATA_WIDTH - 1:0] SLV_REG1,
+  output wire [AVS_AVALONSLAVE_DATA_WIDTH - 1:0] SLV_REG2,
+  output wire [AVS_AVALONSLAVE_DATA_WIDTH - 1:0] SLV_REG3,
 
   // user ports end
   // dont change these ports
   input wire CSI_CLOCK_CLK,
   input wire CSI_CLOCK_RESET_N,
   input wire [AVS_AVALONSLAVE_ADDRESS_WIDTH - 1:0] AVS_AVALONSLAVE_ADDRESS,
-  output wire AVS_AVALONSLAVE_WAITREQUEST,
+  //output wire AVS_AVALONSLAVE_WAITREQUEST, // No need to Use WaitRequest in this case (fixed response latency)
   input wire AVS_AVALONSLAVE_READ,
   input wire AVS_AVALONSLAVE_WRITE,
   output wire [AVS_AVALONSLAVE_DATA_WIDTH - 1:0] AVS_AVALONSLAVE_READDATA,
@@ -26,7 +30,7 @@ module AVS_AVALONSLAVE #
   // you can change name and type of these ports
   wire start;
 
-  reg wait_request;
+  //reg wait_request;
   reg [AVS_AVALONSLAVE_DATA_WIDTH - 1:0] read_data;
   // these are slave registers. they MUST be here!
   reg [AVS_AVALONSLAVE_DATA_WIDTH - 1:0] slv_reg0;
@@ -38,8 +42,12 @@ module AVS_AVALONSLAVE #
   // never directly send values to output
   assign START = start;
 
-  assign AVS_AVALONSLAVE_WAITREQUEST = wait_request;
+  //assign AVS_AVALONSLAVE_WAITREQUEST = wait_request;
   assign AVS_AVALONSLAVE_READDATA = read_data;
+  assign SLV_REG0 = slv_reg0;
+  assign SLV_REG1 = slv_reg1;
+  assign SLV_REG2 = slv_reg2;
+  assign SLV_REG3 = slv_reg3;
 
   // it is an example and you can change it or delete it completely
   always @(posedge CSI_CLOCK_CLK)
@@ -69,10 +77,19 @@ module AVS_AVALONSLAVE #
       end
       endcase
     end
+    else if (AVS_AVALONSLAVE_READ) begin
+      case (AVS_AVALONSLAVE_ADDRESS)
+        4'h0: read_data <= slv_reg0;
+        4'h4: read_data <= slv_reg1;
+        4'h8: read_data <= slv_reg2;
+        4'hc: read_data <= slv_reg3;
+        default: read_data <= 'bz;
+      endcase
+    end
     // it is an example design
     else if(DONE)
     begin
-      slv_reg0 <= (slv_reg0 | 32'h80000000);
+      slv_reg0 <= (slv_reg0 | 32'h80000000); // why not slv_reg0[31] <= 1'b1; ?!
     end
   end
 
