@@ -51,7 +51,15 @@ wire [avm_avalonmaster_data_width-1:0] l_buf0;
 wire [avm_avalonmaster_data_width-1:0] r_buf1;
 wire [avm_avalonmaster_data_width-1:0] l_buf1;
 
-assign DONE = done_reg;
+reg done_reg = 0;
+reg read;
+reg write;
+reg load_enable;
+reg [1:0] load_buf;
+
+reg [avm_avalonmaster_address_width-1:0] inAddress;
+reg [avm_avalonmaster_data_width-1:0] writeData;
+reg [avm_avalonmaster_address_width-1:0] writeAddress;
 
 // control interface instanciation
 AVS_AVALONSLAVE #
@@ -120,11 +128,6 @@ AVM_AVALONMASTER_MAGNITUDE #
 
 localparam [3:0] Idle = 0, read1 = 1, read2 = 2, read3 = 3, read4 = 4, add = 5, write1 = 6, write2 = 7, done = 8;
 
-reg done_reg = 0;
-reg read;
-reg write;
-reg load_enable;
-reg [1:0] load_buf;
 reg [10:0] numIter;
 reg [18:0] sizeIter;
 
@@ -135,9 +138,6 @@ reg [3:0] state;
 reg [avs_avalonslave_data_width-1:0] r_buf_addr;
 reg [avs_avalonslave_data_width-1:0] l_buf_addr;
 reg [avs_avalonslave_data_width-1:0] out_addr;
-reg [avm_avalonmaster_address_width-1:0] inAddress;
-reg [avm_avalonmaster_data_width-1:0] writeData;
-reg [avm_avalonmaster_address_width-1:0] writeAddress;
 reg [(avs_avalonslave_data_width*2)-1:0] sum;
 
 wire [avm_avalonmaster_data_width-1:0] r_buf0_abs;
@@ -148,6 +148,8 @@ wire [avm_avalonmaster_data_width-1:0] l_buf1_abs;
 wire [avs_avalonslave_data_width:0] add0, add1;
 wire [avs_avalonslave_data_width+1:0] addToSum;
 wire [(avs_avalonslave_data_width*2)-1:0] toSum;
+
+assign DONE = done_reg;
 
 assign r_buf0_abs = (r_buf0_abs[avm_avalonmaster_data_width-1]) ? ((~r_buf0_abs) + {{(avm_avalonmaster_data_width-1){1'b0}} , {1'b1}}) : r_buf0_abs;
 assign l_buf0_abs = (l_buf0_abs[avm_avalonmaster_data_width-1]) ? ((~l_buf0_abs) + {{(avm_avalonmaster_data_width-1){1'b0}} , {1'b1}}) : l_buf0_abs;

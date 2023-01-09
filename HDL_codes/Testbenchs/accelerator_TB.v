@@ -1,4 +1,10 @@
+`timescale 1ns/1ns
 module accelerator_TB();
+
+    localparam integer avs_avalonslave_data_width = 32;
+    localparam integer avs_avalonslave_address_width = 4;
+    localparam integer avm_avalonmaster_data_width = 32;
+    localparam integer avm_avalonmaster_address_width = 32;
 
     reg                                          DONE;
     reg                                          csi_clock_clk;
@@ -16,17 +22,17 @@ module accelerator_TB();
     wire                                         avm_avalonmaster_write;
     wire [avm_avalonmaster_data_width - 1:0]     avm_avalonmaster_writedata;
     
-    localparam clk_period = 20ns;
+    localparam clk_period = 20;
     always #(clk_period/2) csi_clock_clk = ~csi_clock_clk;
 
 
-    accelerator uut
+    accelerator
     #(
-        avs_avalonslave_data_width = 32,
-        avs_avalonslave_address_width = 4,
-        avm_avalonmaster_data_width = 32,
-        avm_avalonmaster_address_width = 32
-    )
+        .avs_avalonslave_data_width(avs_avalonslave_data_width),
+        .avs_avalonslave_address_width(avs_avalonslave_address_width),
+        .avm_avalonmaster_data_width(avm_avalonmaster_data_width),
+        .avm_avalonmaster_address_width(avm_avalonmaster_address_width)
+    ) uut
     (
     .DONE                           (DONE),
     .csi_clock_clk                  (csi_clock_clk),
@@ -45,6 +51,21 @@ module accelerator_TB();
     .avm_avalonmaster_writedata     (avm_avalonmaster_writedata)
     );
 
+    reg [avs_avalonslave_data_width-1:0]   L_BUF    [70:77];
+    reg [avs_avalonslave_data_width-1:0]   R_BUF    [80:87];
+
+    reg [avs_avalonslave_data_width-1:0] l_buf_addr = 32'h00000046;
+    reg [avs_avalonslave_data_width-1:0] r_buf_addr = 32'h00000050;
+
+    initial begin
+        $readmemb("L_BUF.txt", L_BUF);
+    end
     
+    initial begin
+        $readmemb("R_BUF.txt", R_BUF);
+    end
+
+
+
 
 endmodule
