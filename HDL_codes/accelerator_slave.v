@@ -31,7 +31,7 @@ module AVS_AVALONSLAVE #
   wire start;
 
   //reg wait_request;
-  reg [AVS_AVALONSLAVE_DATA_WIDTH - 1:0] read_data;
+  reg [AVS_AVALONSLAVE_DATA_WIDTH - 1:0] read_data = 'bz;
   // these are slave registers. they MUST be here!
   reg [AVS_AVALONSLAVE_DATA_WIDTH - 1:0] slv_reg0;
   reg [AVS_AVALONSLAVE_DATA_WIDTH - 1:0] slv_reg1;

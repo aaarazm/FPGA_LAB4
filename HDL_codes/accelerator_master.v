@@ -9,14 +9,14 @@ module AVM_AVALONMASTER_MAGNITUDE #
   // user ports begin
 
   // these are just some example ports. you can change them all
-  input wire START,
+  //input wire START,
   input wire load_enable,
   input wire READ,
   input wire WRITE,
   input wire [1:0] load_buf,
   input wire [AVM_AVALONMASTER_ADDRESS_WIDTH - 1:0] inAddress,
   input wire [AVM_AVALONMASTER_DATA_WIDTH - 1:0] writeData,
-  input wire [AVM_AVALONMASTER_ADDRESS_WIDTH - 1:0] writeAddress,
+  //input wire [AVM_AVALONMASTER_ADDRESS_WIDTH - 1:0] writeAddress,
   //output wire DONE,
   output wire waitRequest,
   output wire [AVM_AVALONMASTER_DATA_WIDTH - 1:0] r_buf0,
@@ -58,7 +58,8 @@ module AVM_AVALONMASTER_MAGNITUDE #
   assign l_buf0 = L_BUF0;
   assign r_buf1 = R_BUF1;
   assign l_buf1 = L_BUF1;
-  assign AVM_AVALONMASTER_ADDRESS = address;
+  //assign address = ;
+  assign AVM_AVALONMASTER_ADDRESS = inAddress;
   assign AVM_AVALONMASTER_READ = read;
   assign AVM_AVALONMASTER_WRITE = write;
   assign AVM_AVALONMASTER_WRITEDATA = writedata;
