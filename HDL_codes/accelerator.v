@@ -151,10 +151,10 @@ wire [(avs_avalonslave_data_width*2)-1:0] toSum;
 
 assign DONE = done_reg;
 
-assign r_buf0_abs = (r_buf0_abs[avm_avalonmaster_data_width-1]) ? ((~r_buf0_abs) + {{(avm_avalonmaster_data_width-1){1'b0}} , {1'b1}}) : r_buf0_abs;
-assign l_buf0_abs = (l_buf0_abs[avm_avalonmaster_data_width-1]) ? ((~l_buf0_abs) + {{(avm_avalonmaster_data_width-1){1'b0}} , {1'b1}}) : l_buf0_abs;
-assign r_buf1_abs = (r_buf1_abs[avm_avalonmaster_data_width-1]) ? ((~r_buf1_abs) + {{(avm_avalonmaster_data_width-1){1'b0}} , {1'b1}}) : r_buf1_abs;
-assign l_buf1_abs = (l_buf1_abs[avm_avalonmaster_data_width-1]) ? ((~l_buf1_abs) + {{(avm_avalonmaster_data_width-1){1'b0}} , {1'b1}}) : l_buf1_abs;
+assign r_buf0_abs = (r_buf0[avm_avalonmaster_data_width-1]) ? ((~r_buf0) + {{(avm_avalonmaster_data_width-1){1'b0}} , {1'b1}}) : r_buf0;
+assign l_buf0_abs = (l_buf0[avm_avalonmaster_data_width-1]) ? ((~l_buf0) + {{(avm_avalonmaster_data_width-1){1'b0}} , {1'b1}}) : l_buf0;
+assign r_buf1_abs = (r_buf1[avm_avalonmaster_data_width-1]) ? ((~r_buf1) + {{(avm_avalonmaster_data_width-1){1'b0}} , {1'b1}}) : r_buf1;
+assign l_buf1_abs = (l_buf1[avm_avalonmaster_data_width-1]) ? ((~l_buf1) + {{(avm_avalonmaster_data_width-1){1'b0}} , {1'b1}}) : l_buf1;
 
 assign add0 = r_buf0_abs + l_buf0_abs;
 assign add1 = r_buf1_abs + l_buf1_abs;
@@ -224,9 +224,6 @@ end
 
 always @(pState, rightAddress, leftAddress, outAddress, SLV_REG0, l_buf_addr, r_buf_addr) begin : FSM_Combinational // use "always" or
   load_enable <= 0; load_buf <= 2'b00; write <= 0; read <= 0; writeData <= 0; done_reg <= 0;     // "always_comb" block?
-  //if (csi_clock_reset_n == 0) begin
-  //  pState <= Idle;
-  //end
   case (pState)
     Idle: begin
       r_buf_addr  <= rightAddress;
@@ -237,100 +234,46 @@ always @(pState, rightAddress, leftAddress, outAddress, SLV_REG0, l_buf_addr, r_
       sizeIter    <= 0;
       sum         <= 0;
       {size, num} <= SLV_REG0[30:1];
-      //if (start) begin
-      //  //done_reg  <= 0;
-      //  pState <= read1;
-      //end
     end
     read1: begin
       load_buf    <= 2'b00;
       load_enable <= 1'b1;
       read        <= 1'b1;
       inAddress <= l_buf_addr;
-      //if (!waitRequest) begin
-      //  sizeIter <= sizeIter + 1;
-      //  pState    <= read2;
-      //end
     end
     read2: begin
       load_buf    <= 2'b01;
       load_enable <= 1'b1;
       read        <= 1'b1;
       inAddress   <= r_buf_addr;
-      //if (!waitRequest) begin
-      //  if (sizeIter < size) begin
-      //    r_buf_addr <= r_buf_addr + 1;
-      //    l_buf_addr <= l_buf_addr + 1;
-      //    pState <= read3;
-      //  end
-      //  else begin
-      //    r_buf_addr <= r_buf_addr + 1;
-      //    l_buf_addr <= l_buf_addr + 1;
-      //    pState      <= write1;
-      //  end
-      //end
     end
     read3: begin
       load_buf    <= 2'b10;
       load_enable <= 1'b1;
       read        <= 1'b1;
       inAddress   <= l_buf_addr;
-      //if (!waitRequest) begin
-      //  sizeIter <= sizeIter + 1;
-      //  pState    <= read4;
-      //end
     end
     read4: begin
       load_buf    <= 2'b11;
       load_enable <= 1'b1;
       read        <= 1'b1;
       inAddress   <= r_buf_addr;
-      //if (!waitRequest) begin
-      //  r_buf_addr <= r_buf_addr + 1;
-      //  l_buf_addr <= l_buf_addr + 1;
-      //  pState      <= add;
-      //end
     end
     add: begin
       sum <= toSum;
-      //if (sizeIter < size) begin
-      //  pState <= read1;
-      //end
-      //else begin
-      //  sizeIter <= 0;
-      //  pState    <= write1;
-      //end
     end
     write1: begin
       write        <= 1'b1;
       inAddress <= out_addr;
       writeData    <= sum[31:0];
-      //if (!waitRequest) begin
-      //  out_addr <= out_addr + 1;
-      //  numIter  <= numIter + 1;
-      //  pState    <= write2;
-      //end
     end
     write2: begin
       write        <= 1'b1;
       inAddress <= out_addr;
       writeData    <= sum[63:32];
-      //if (!waitRequest) begin
-      //  out_addr <= out_addr + 1;
-      //  if (numIter < num) begin
-      //    sum   <= 0;
-      //    pState <= read1;
-      //  end
-      //  else begin
-      //    pState <= done;
-      //  end
-      //end
     end
     done: begin
       done_reg <= 1'b1;
-      //if (!start) begin
-      //  pState <= Idle;
-      //end
     end
   endcase
 end

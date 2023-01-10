@@ -38,7 +38,6 @@ module accelerator_TB();
 
     specialMem mem1
     (
-        .clock(csi_clock_clk),
         .address(avm_avalonmaster_address),
         .readEn(avm_avalonmaster_read),
         .out(avm_avalonmaster_readdata)
